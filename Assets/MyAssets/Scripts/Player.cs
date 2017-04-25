@@ -22,15 +22,16 @@ public class Player : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        
+        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") *10, Input.GetAxis("Vertical"));
+        if (transform.position.y > 1) movement.y = 0;
 
         rigid_body.AddForce(movement * playerSpeed * Time.deltaTime);
 
         if(transform.position.y < bottomLevel)
         {
             Debug.Log("Leider verloren");
-            Debug.Log("Neuer Versuch!");
-            GameObject.FindObjectOfType<Spawner>().spawn();
+            GameObject.FindObjectOfType<Spawner>().respawn();
             Destroy(gameObject);
         }
     }
