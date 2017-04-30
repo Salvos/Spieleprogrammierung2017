@@ -12,6 +12,7 @@ public class World : MonoBehaviour {
 
     private Spawner Spawner;
     private Player player;
+    private Camera camera;
 
 
     ///=================================///
@@ -23,6 +24,7 @@ public class World : MonoBehaviour {
     /// </summary>
     void Start () {
         Spawner = GameObject.FindObjectOfType<Spawner>();
+        camera = GetComponent<Camera>();
         Spawner.spawnPlayer();
     }
 
@@ -45,6 +47,15 @@ public class World : MonoBehaviour {
         Spawner.spawnPlayer();
     }
 
+    /// <summary>
+    /// Destroys the player & notificate the camera
+    /// </summary>
+    private void destroyPlayer()
+    {
+        Destroy(player.gameObject);
+        camera.SetPlayer(null);
+    }
+
 
 
     ///==================================///
@@ -59,6 +70,7 @@ public class World : MonoBehaviour {
     public void registerPlayer(Player player)
     {
         this.player = player;
+        camera.SetPlayer(player);
     }
 
     /// <summary>
@@ -70,7 +82,7 @@ public class World : MonoBehaviour {
     {
         // print to console && destroy the player
         Debug.Log("Leider verloren");
-        Destroy(player.gameObject);
+        destroyPlayer();
 
         // [OPTIONAL] respawn the player
         Invoke("respawnPlayer", 5);
@@ -89,7 +101,7 @@ public class World : MonoBehaviour {
         Debug.Log("Ziel erreicht");
 
         // [OPTIONAL] destroy player
-        Destroy(player.gameObject);
+        destroyPlayer();
         Debug.Log("Neustart in 5 Sekunden");
 
         // [OPTIONAL] respawn the player
