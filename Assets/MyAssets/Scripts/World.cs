@@ -4,14 +4,42 @@ using UnityEngine;
 
 public class World : MonoBehaviour {
 
-    [Header("Start-Spawn")]
-    public GameObject firstSpawner;
+    [Range(-100, 0)]
+    [Header("Minimalhöhe / Player death")]
+    public float bottomLevel = -1;
 
-	void Start () {
-        //firstSpawner
+    private Spawner Spawner;
+    private Player player;
+
+    void Start () {
+        Spawner = GameObject.FindObjectOfType<Spawner>();
+
+        Spawner.spawnPlayer();
     }
-	
-	void Update () {
-		
-	}
+
+    private void respawnPlayer()
+    {
+        // Hole den letzten Checkpoint und spawne den Spieler DORT!
+
+        Debug.Log("Ein neuer Versuch :).");
+        Spawner.spawnPlayer();
+    }
+
+    public void registerPlayer(Player player)
+    {
+        this.player = player;
+    }
+
+    public void playerDeath()
+    {
+        Debug.Log("Leider verloren");
+        Invoke("respawnPlayer", 4);
+    }
+
+    public void playerFinish()
+    {
+        player.GetComponent<Player>().movingEnabled = false;
+        Debug.Log("Ziel erreicht");
+    }
+
 }

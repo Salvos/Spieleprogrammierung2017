@@ -7,16 +7,22 @@ public class Player : MonoBehaviour {
     [Header("Geschwindigkeit")]
     public float playerSpeed = 100;
 
-    [Range(-100, 0)]
-    [Header("Minimalhöhe")]
-    public float bottomLevel = -5;
+    [Header("Spielerbewegung erlaubt?")]
+    public bool movingEnabled = true;
+
+    private World weltScript;
 
     Rigidbody rigid_body;
 
     // Use this for initialization
     void Start()
     {
+        // get the worldscript & the rigidbody
+        weltScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<World>();
         rigid_body = GetComponent<Rigidbody>();
+
+        // register this player
+        weltScript.registerPlayer(this);
     }
 
     // Update is called once per frame
@@ -24,14 +30,21 @@ public class Player : MonoBehaviour {
     {
         
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") *10, Input.GetAxis("Vertical"));
-        if (transform.position.y > 1) movement.y = 0;
+        if (transform.position.y > 1)
+            movement.y = 0;
 
-        rigid_body.AddForce(movement * playerSpeed * Time.deltaTime);
-
-        if(transform.position.y < bottomLevel)
+        if(movingEnabled)
         {
-            Debug.Log("Leider verloren");
-            GameObject.FindObjectOfType<Spawner>().respawn();
+            rigid_body.AddForce(movement * playerSpeed * Time.deltaTime);
+        } else
+        {
+            rigid_body.velocity = Vector3.zero;
+        }
+
+
+        if(transform.position.y < weltScript.bottomLevel)
+        {
+            weltScript.playerDeath();
             Destroy(gameObject);
         }
     }

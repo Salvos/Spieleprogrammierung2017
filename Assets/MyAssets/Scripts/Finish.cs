@@ -5,23 +5,23 @@ using UnityEngine;
 public class Finish : MonoBehaviour
 {
 
+    private World weltScript;
+
     // Use this for initialization
     void Start()
     {
-
+        weltScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<World>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    /// <summary>
+    /// on collision with player
+    /// </summary>
+    /// <param name="col"></param>
     void OnCollisionEnter(Collision col)
     {
         if(col.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Ziel erreicht");
+            weltScript.playerFinish();
         }
     }
 }

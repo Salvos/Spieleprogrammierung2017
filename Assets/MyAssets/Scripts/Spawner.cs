@@ -33,7 +33,7 @@ public class Spawner : MonoBehaviour {
     /// <summary>
     /// respawns the player
     /// </summary>
-    public void respawn()
+    public void spawnPlayer()
     {
         // play the animation
         animator.SetTrigger("respawn");
