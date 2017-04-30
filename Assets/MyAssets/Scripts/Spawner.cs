@@ -3,35 +3,58 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour {
-    
+    ///==================================///
+    ///==========Vars & Objects==========///
+    ///==================================///
     public GameObject playerobject;
-    private Animator animator;
     public GameObject prePlayer;
+
+    private Animator animator;
 
     // Sets the Color for initialization
     private Color preColor = new Color(1, 1, 1);
+
+
+
+    ///=================================///
+    ///==========Unity Methods==========///
+    ///=================================///
 
     /// <summary>
     /// Use this for initialization
     /// get the animator component for the animation
     /// </summary>
-    void Start () {
+    void Start()
+    {
         animator = GetComponent<Animator>();
     }
-	
+
+
+
+    ///===================================///
+    ///==========PRIVATE METHODS==========///
+    ///===================================///
+
     /// <summary>
     /// spawn component
     /// gets triggered after the animation
     /// "spawn" the player object up the object
     /// </summary>
-    public void spawn()
+    private void spawn()
     {
         GameObject player = GameObject.Instantiate(playerobject, transform.position + Vector3.up, Quaternion.identity);
         player.GetComponent<MeshRenderer>().material.color = preColor;
     }
 
+
+
+    ///==================================///
+    ///==========PUBLIC METHODS==========///
+    ///==================================///
+
     /// <summary>
     /// respawns the player
+    /// also changes the color
     /// </summary>
     public void spawnPlayer()
     {

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+    ///==================================///
+    ///==========Vars & Objects==========///
+    ///==================================///
     [Range(1, 1000)]
     [Header("Geschwindigkeit")]
     public float playerSpeed = 100;
@@ -10,42 +13,76 @@ public class Player : MonoBehaviour {
     [Header("Spielerbewegung erlaubt?")]
     public bool movingEnabled = true;
 
-    private World weltScript;
+    private World worldScript;
+    private Rigidbody rigid_body;
 
-    Rigidbody rigid_body;
 
-    // Use this for initialization
+    ///=================================///
+    ///==========Unity Methods==========///
+    ///=================================///
+
+    /// <summary>
+    /// initialization for the worldscript
+    /// get it from the main camera object
+    /// also register the player in the worldscript
+    /// </summary>
     void Start()
     {
         // get the worldscript & the rigidbody
-        weltScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<World>();
+        worldScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<World>();
         rigid_body = GetComponent<Rigidbody>();
 
         // register this player
-        weltScript.registerPlayer(this);
+        worldScript.registerPlayer(this);
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// controls the player movement 
+    /// & checks the position of the player object
+    /// </summary>
     void Update()
     {
-        
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") *10, Input.GetAxis("Vertical"));
+        playerMoving();
+        positionCheck();
+    }
+
+
+
+    ///===================================///
+    ///==========PRIVATE METHODS==========///
+    ///===================================///
+
+    /// <summary>
+    /// controls the player-movements
+    /// - also jumping
+    /// if moving is Disabled -> force the playerobject to stop
+    /// </summary>
+    private void playerMoving()
+    {
+        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") * 10, Input.GetAxis("Vertical"));
         if (transform.position.y > 1)
             movement.y = 0;
 
-        if(movingEnabled)
+        if (movingEnabled)
         {
             rigid_body.AddForce(movement * playerSpeed * Time.deltaTime);
-        } else
+        }
+        else
         {
             rigid_body.velocity = Vector3.zero;
         }
+    }
 
-
-        if(transform.position.y < weltScript.bottomLevel)
+    /// <summary>
+    /// checks the position of the player
+    /// if it below the bottomLevel of the worldScript -> kill the player!
+    /// </summary>
+    private void positionCheck()
+    {
+        if (transform.position.y < worldScript.bottomLevel)
         {
-            weltScript.playerDeath();
-            Destroy(gameObject);
+            worldScript.playerDeath();
         }
     }
+
 }
