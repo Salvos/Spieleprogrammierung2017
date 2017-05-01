@@ -16,6 +16,9 @@ public class Player : MonoBehaviour {
     private World worldScript;
     private Rigidbody rigid_body;
 
+    private bool isJumping = false;
+
+
 
     ///=================================///
     ///==========Unity Methods==========///
@@ -46,6 +49,33 @@ public class Player : MonoBehaviour {
         positionCheck();
     }
 
+    /// <summary>
+    /// triggers on collision with the plane
+    /// disables jumping
+    /// </summary>
+    /// <param name="col"></param>
+    void OnCollisionEnter(Collision col)
+    {
+        // if the collision object has a player-tag -> notificate the worldscript
+        if (col.gameObject.CompareTag("Plane"))
+        {
+            isJumping = false;
+        }
+    }
+
+    /// <summary>
+    /// enables jumping
+    /// </summary>
+    /// <param name="col"></param>
+    void OnCollisionExit(Collision col)
+    {
+        // if the collision object has a player-tag -> notificate the worldscript
+        if (col.gameObject.CompareTag("Plane"))
+        {
+            isJumping = true;
+        }
+    }
+
 
 
     ///===================================///
@@ -60,7 +90,7 @@ public class Player : MonoBehaviour {
     private void playerMoving()
     {
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") * 10, Input.GetAxis("Vertical"));
-        if (transform.position.y > 1)
+        if (isJumping)
             movement.y = 0;
 
         if (movingEnabled)
