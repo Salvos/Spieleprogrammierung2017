@@ -89,7 +89,7 @@ public class Player : MonoBehaviour {
     /// </summary>
     private void playerMoving()
     {
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") * 10, Input.GetAxis("Vertical"));
+        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") * 100, Input.GetAxis("Vertical"));
         if (isJumping)
             movement.y = 0;
 
