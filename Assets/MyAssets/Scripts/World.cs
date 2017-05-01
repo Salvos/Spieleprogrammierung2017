@@ -10,9 +10,17 @@ public class World : MonoBehaviour {
     [Header("Minimalhöhe / Player death")]
     public float bottomLevel = -1;
 
+    [Range(0, 10)]
+    [Header("Respawn nach Tod")]
+    public float respawnAfterDeath = 2;
+
+    [Range(-100, 0)]
+    [Header("Respawn nach Finish")]
+    public float respawnAfterFinish = 5;
+
     private Spawner Spawner;
     private Player player;
-    private Camera camera;
+    private MyCamera mycamera;
 
 
     ///=================================///
@@ -24,7 +32,7 @@ public class World : MonoBehaviour {
     /// </summary>
     void Start () {
         Spawner = GameObject.FindObjectOfType<Spawner>();
-        camera = GetComponent<Camera>();
+        mycamera = GetComponent<MyCamera>();
         Spawner.spawnPlayer();
     }
 
@@ -43,7 +51,6 @@ public class World : MonoBehaviour {
     {
         // Hole den letzten Checkpoint und spawne den Spieler DORT!
 
-        Debug.Log("Ein neuer Versuch :).");
         Spawner.spawnPlayer();
     }
 
@@ -53,7 +60,7 @@ public class World : MonoBehaviour {
     private void destroyPlayer()
     {
         Destroy(player.gameObject);
-        camera.SetPlayer(null);
+        mycamera.SetPlayer(null);
     }
 
 
@@ -70,7 +77,7 @@ public class World : MonoBehaviour {
     public void registerPlayer(Player player)
     {
         this.player = player;
-        camera.SetPlayer(player);
+        mycamera.SetPlayer(player);
     }
 
     /// <summary>
@@ -85,7 +92,7 @@ public class World : MonoBehaviour {
         destroyPlayer();
 
         // [OPTIONAL] respawn the player
-        Invoke("respawnPlayer", 5);
+        Invoke("respawnPlayer", respawnAfterDeath);
     }
 
     /// <summary>
@@ -102,9 +109,8 @@ public class World : MonoBehaviour {
 
         // [OPTIONAL] destroy player
         destroyPlayer();
-        Debug.Log("Neustart in 5 Sekunden");
 
         // [OPTIONAL] respawn the player
-        Invoke("respawnPlayer", 5);
+        Invoke("respawnPlayer", respawnAfterFinish);
     }
 }

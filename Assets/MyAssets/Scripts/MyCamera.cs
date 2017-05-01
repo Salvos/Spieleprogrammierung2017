@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Camera : MonoBehaviour {
+public class MyCamera : MonoBehaviour {
     ///==================================///
     ///==========Vars & Objects==========///
     ///==================================///
@@ -13,7 +13,6 @@ public class Camera : MonoBehaviour {
     private Vector3 startPosition;
     private Vector3 offset;
 
-    private World worldScript;
 
 
     ///=================================///
@@ -27,7 +26,6 @@ public class Camera : MonoBehaviour {
     void Start()
     {
         startPosition = transform.position;
-        worldScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<World>();
     }
 
     /// <summary>
@@ -47,6 +45,7 @@ public class Camera : MonoBehaviour {
     ///===================================///
 
     /// <summary>
+    /// LATER USED!
     /// change the camera mode (static / follow)
     /// if triggered -> make a transition!
     /// </summary>

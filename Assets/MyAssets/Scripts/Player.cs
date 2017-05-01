@@ -8,7 +8,11 @@ public class Player : MonoBehaviour {
     ///==================================///
     [Range(1, 1000)]
     [Header("Geschwindigkeit")]
-    public float playerSpeed = 100;
+    public float playerSpeed = 125;
+
+    [Range(1, 1000)]
+    [Header("Jump-Boost")]
+    public float jumpBoost = 100;
 
     [Header("Spielerbewegung erlaubt?")]
     public bool movingEnabled = true;
@@ -89,7 +93,7 @@ public class Player : MonoBehaviour {
     /// </summary>
     private void playerMoving()
     {
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") * 100, Input.GetAxis("Vertical"));
+        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") * jumpBoost, Input.GetAxis("Vertical"));
         if (isJumping)
             movement.y = 0;
 
