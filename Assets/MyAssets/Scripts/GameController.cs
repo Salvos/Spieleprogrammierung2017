@@ -31,6 +31,9 @@ public class GameController : MonoBehaviour {
     ///==========Unity Methods==========///
     ///=================================///
 
+    /// <summary>
+    /// sets gameController not to be destroyed
+    /// </summary>
     void Start () {
         GameObject.DontDestroyOnLoad(gameObject);
 	}
@@ -166,5 +169,14 @@ public class GameController : MonoBehaviour {
         #else
         Application.Quit();
         #endif
+    }
+
+    /// <summary>
+    /// returns the score as string
+    /// </summary>
+    /// <returns></returns>
+    public string getScore()
+    {
+        return score.ToString();
     }
 }
