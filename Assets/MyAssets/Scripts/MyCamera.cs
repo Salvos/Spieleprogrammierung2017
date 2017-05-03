@@ -12,7 +12,7 @@ public class MyCamera : MonoBehaviour {
     private Player player;
     private Vector3 startPosition;
     private Vector3 offset;
-
+    private GameController gameController;
 
 
     ///=================================///
@@ -21,11 +21,12 @@ public class MyCamera : MonoBehaviour {
 
     /// <summary>
     /// sets the startposition of the camera
-    /// and get the worldScript
     /// </summary>
     void Start()
     {
         startPosition = transform.position;
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+        gameController.registerCamera(this);
     }
 
     /// <summary>

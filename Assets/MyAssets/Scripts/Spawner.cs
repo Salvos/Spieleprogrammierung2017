@@ -10,6 +10,7 @@ public class Spawner : MonoBehaviour {
     public GameObject prePlayer;
 
     private Animator animator;
+    private GameController gameController;
 
     // Sets the Color for initialization
     private Color preColor = new Color(1, 1, 1);
@@ -26,7 +27,15 @@ public class Spawner : MonoBehaviour {
     /// </summary>
     void Start()
     {
+        // get the gamecontroller
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+
         animator = GetComponent<Animator>();
+
+        // register this spawner
+        gameController.registerSpawner(this);
+
+        
     }
 
 

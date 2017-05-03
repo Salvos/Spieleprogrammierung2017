@@ -8,9 +8,9 @@ public class Finish : MonoBehaviour {
     ///==================================///
 
     /// <summary>
-    /// variable for worldscript to notificate the script if the player enters the finish block
+    /// variable for gamecontroller to notificate the script if the player enters the finish block
     /// </summary>
-    private World worldScript;
+    private GameController gameController;
 
 
 
@@ -19,12 +19,12 @@ public class Finish : MonoBehaviour {
     ///==================================///
 
     /// <summary>
-    /// initialization for the worldscript
+    /// initialization for the gamecontroller
     /// get it from the main camera object
     /// </summary>
     void Start()
     {
-        worldScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<World>();
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
     /// <summary>
@@ -33,10 +33,10 @@ public class Finish : MonoBehaviour {
     /// <param name="col"></param>
     void OnCollisionEnter(Collision col)
     {
-        // if the collision object has a player-tag -> notificate the worldscript
+        // if the collision object has a player-tag -> notificate the gamecontroller
         if (col.gameObject.CompareTag("Player"))
         {
-            worldScript.playerFinish();
+            gameController.playerFinish();
         }
     }
 }

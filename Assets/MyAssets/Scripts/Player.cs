@@ -17,7 +17,7 @@ public class Player : MonoBehaviour {
     [Header("Spielerbewegung erlaubt?")]
     public bool movingEnabled = true;
 
-    private World worldScript;
+    private GameController gameController;
     private Rigidbody rigid_body;
 
     private bool isJumping = false;
@@ -35,12 +35,12 @@ public class Player : MonoBehaviour {
     /// </summary>
     void Start()
     {
-        // get the worldscript & the rigidbody
-        worldScript = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<World>();
+        // get the gamecontroller & the rigidbody
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         rigid_body = GetComponent<Rigidbody>();
 
         // register this player
-        worldScript.registerPlayer(this);
+        gameController.registerPlayer(this);
     }
 
     /// <summary>
@@ -113,9 +113,9 @@ public class Player : MonoBehaviour {
     /// </summary>
     private void positionCheck()
     {
-        if (transform.position.y < worldScript.bottomLevel)
+        if (transform.position.y < gameController.bottomLevel)
         {
-            worldScript.playerDeath();
+            gameController.playerDeath();
         }
     }
 
