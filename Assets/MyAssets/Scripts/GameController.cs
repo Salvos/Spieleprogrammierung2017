@@ -132,7 +132,9 @@ public class GameController : MonoBehaviour {
         destroyPlayer();
 
         // [OPTIONAL] respawn the player
-        Invoke("respawnPlayer", respawnAfterFinish);
+        //Invoke("respawnPlayer", respawnAfterFinish);
+
+        LoadLevel("End");
     }
 
     /// <summary>
