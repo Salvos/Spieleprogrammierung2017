@@ -134,10 +134,10 @@ public class GameController : MonoBehaviour {
         // [OPTIONAL] destroy player
         destroyPlayer();
 
-        // [OPTIONAL] respawn the player
-        //Invoke("respawnPlayer", respawnAfterFinish);
+        // Enables the Canvas-Element
+        GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>().enabled = true;
 
-        LoadLevel("End");
+        //LoadLevel("End");
     }
 
     /// <summary>
@@ -177,6 +177,7 @@ public class GameController : MonoBehaviour {
     /// <returns></returns>
     public string getScore()
     {
+        score = Random.Range(1, 1000000);
         return score.ToString();
     }
 }
