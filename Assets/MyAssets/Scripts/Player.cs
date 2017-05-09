@@ -93,9 +93,17 @@ public class Player : MonoBehaviour {
     /// </summary>
     private void playerMoving()
     {
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump") * jumpBoost, Input.GetAxis("Vertical"));
-        if (isJumping)
-            movement.y = 0;
+        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, (float) 0.5))
+        {
+            if(hit.collider.tag == "Plane")
+            {
+                movement.y = Input.GetAxis("Jump") * jumpBoost;
+            }
+        }
 
         if (movingEnabled)
         {
