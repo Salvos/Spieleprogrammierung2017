@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
     ///==================================///
@@ -24,7 +25,7 @@ public class GameController : MonoBehaviour {
     private Player player;
 
     private int score = 0;
-
+    private int lifes = 3;
 
 
     ///=================================///
@@ -36,6 +37,8 @@ public class GameController : MonoBehaviour {
     /// </summary>
     void Start () {
         GameObject.DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
 	}
 	
 
@@ -65,7 +68,24 @@ public class GameController : MonoBehaviour {
         mycamera.SetPlayer(null);
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if(scene.name != "Start" && scene.name != "End")
+        {
+            updateLifes();
+            GameObject.FindGameObjectWithTag("LevelName").GetComponent<Text>().text = "\""+scene.name+"\"";
+        }
+    }
 
+    private void updateLifes()
+    {
+        string lifeText = "";
+        for(int i = 0; i < lifes; i++)
+        {
+            lifeText += "❤";
+        }
+        GameObject.FindGameObjectWithTag("Lifes").GetComponent<Text>().text = lifeText;
+    }
 
     ///==================================///
     ///==========PUBLIC METHODS==========///
@@ -103,7 +123,6 @@ public class GameController : MonoBehaviour {
         this.mycamera = mycamera;
     }
 
-
     /// <summary>
     /// method defines what happens if the player dies
     /// - print to console
@@ -111,12 +130,26 @@ public class GameController : MonoBehaviour {
     /// </summary>
     public void playerDeath()
     {
-        // print to console && destroy the player
-        Debug.Log("Leider verloren");
+        // destroy the player
         destroyPlayer();
 
-        // [OPTIONAL] respawn the player
-        Invoke("respawnPlayer", respawnAfterDeath);
+        if(lifes > 1)
+        {
+            lifes--;
+
+            updateLifes();
+
+            // [OPTIONAL] respawn the player
+            Invoke("respawnPlayer", respawnAfterDeath);
+        } else
+        {
+            // print to console
+            Debug.Log("Leider verloren");
+
+            // TODO
+            // GameOver Screen! Like in Issue
+            LoadLevel("Start");
+        }
     }
 
     /// <summary>
@@ -157,6 +190,7 @@ public class GameController : MonoBehaviour {
     public void LoadLevel(string level)
     {
         SceneManager.LoadScene(level);
+        lifes = 3;
     }
 
     /// <summary>
