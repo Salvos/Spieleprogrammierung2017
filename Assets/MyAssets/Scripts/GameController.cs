@@ -24,8 +24,16 @@ public class GameController : MonoBehaviour {
     private MyCamera mycamera;
     private Player player;
 
+    private Transform deathCanvas;
+    private Transform finishCanvas;
+    private Transform ingameUI;
+    private Transform startMenue;
+    private Transform endMenue;
+
     private int score = 0;
     private int lifes = 3;
+    private int sceneNumber = 0;
+
 
 
     ///=================================///
@@ -34,13 +42,22 @@ public class GameController : MonoBehaviour {
 
     /// <summary>
     /// sets gameController not to be destroyed
+    /// and add callback function for "onSceneLoaded"
     /// </summary>
     void Start () {
         GameObject.DontDestroyOnLoad(gameObject);
 
         SceneManager.sceneLoaded += OnSceneLoaded;
-	}
-	
+
+        deathCanvas     = transform.Find("DeathCanvas");
+        finishCanvas    = transform.Find("FinishCanvas");
+        ingameUI        = transform.Find("IngameUI");
+        startMenue      = transform.Find("StartMenue");
+        endMenue        = transform.Find("EndMenue");
+
+        SceneManager.LoadScene("Start");
+    }
+
 
 
     ///===================================///
@@ -48,15 +65,43 @@ public class GameController : MonoBehaviour {
     ///===================================///
 
     /// <summary>
+    /// triggers if the scene is loaded
+    /// gets used for temporary objects
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        sceneNumber = scene.buildIndex;
+
+        if (scene.name != "Start" && scene.name != "End" && scene.name != "Init")
+        {
+            finishCanvas.gameObject.SetActive(false);
+            updateLifes();
+            ingameUI.gameObject.SetActive(true);
+            ingameUI.Find("LevelName").GetComponent<Text>().text = "\"" + scene.name + "\"";
+        } else if(scene.name == "Start")
+        {
+            endMenue.gameObject.SetActive(false);
+            startMenue.gameObject.SetActive(true);
+            ingameUI.gameObject.SetActive(false);
+        } else if(scene.name == "End")
+        {
+            endMenue.gameObject.SetActive(true);
+        }
+    }
+
+    /// <summary>
     /// respawns the player
     /// gets triggered by playerDeath- and playerFinish-method
     /// later by the checkpoint object(?)
     /// </summary>
-    private void respawnPlayer()
+    public void respawnPlayer()
     {
-        // Hole den letzten Checkpoint und spawne den Spieler DORT!
+        deathCanvas.gameObject.SetActive(false);
 
-        Spawner.spawnPlayer();
+        // Hole den letzten Checkpoint und spawne den Spieler DORT!
+        this.Spawner.spawnPlayer();
     }
 
     /// <summary>
@@ -64,17 +109,8 @@ public class GameController : MonoBehaviour {
     /// </summary>
     private void destroyPlayer()
     {
-        Destroy(player.gameObject);
         mycamera.SetPlayer(null);
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if(scene.name != "Start" && scene.name != "End")
-        {
-            updateLifes();
-            GameObject.FindGameObjectWithTag("LevelName").GetComponent<Text>().text = "\""+scene.name+"\"";
-        }
+        Destroy(player.gameObject);
     }
 
     private void updateLifes()
@@ -84,8 +120,26 @@ public class GameController : MonoBehaviour {
         {
             lifeText += "❤";
         }
-        GameObject.FindGameObjectWithTag("Lifes").GetComponent<Text>().text = lifeText;
+
+        ingameUI.Find("LebenScore").GetComponent<Text>().text = lifeText;
+        deathCanvas.Find("LebenScore").GetComponent<Text>().text = lifeText;
+
+        // deactivate respawn
+        if (lifes < 1)
+        {
+            deathCanvas.Find("RespawnButton").gameObject.SetActive(false);
+        }
     }
+
+    public void nextLevel()
+    {
+        deathCanvas.gameObject.SetActive(false);
+        finishCanvas.gameObject.SetActive(false);
+        lifes = 3;
+        SceneManager.LoadScene(++sceneNumber);
+    }
+
+
 
     ///==================================///
     ///==========PUBLIC METHODS==========///
@@ -130,26 +184,19 @@ public class GameController : MonoBehaviour {
     /// </summary>
     public void playerDeath()
     {
+        deathCanvas.gameObject.SetActive(true);
+
         // destroy the player
         destroyPlayer();
 
-        if(lifes > 1)
+
+
+        if(lifes > 0)
         {
             lifes--;
-
-            updateLifes();
-
-            // [OPTIONAL] respawn the player
-            Invoke("respawnPlayer", respawnAfterDeath);
-        } else
-        {
-            // print to console
-            Debug.Log("Leider verloren");
-
-            // TODO
-            // GameOver Screen! Like in Issue
-            LoadLevel("Start");
         }
+
+        updateLifes();
     }
 
     /// <summary>
@@ -168,9 +215,7 @@ public class GameController : MonoBehaviour {
         destroyPlayer();
 
         // Enables the Canvas-Element
-        GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>().enabled = true;
-
-        //LoadLevel("End");
+        finishCanvas.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -180,6 +225,7 @@ public class GameController : MonoBehaviour {
     {
         score = 0;
         LoadLevel("Level1");
+        startMenue.gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -189,8 +235,10 @@ public class GameController : MonoBehaviour {
     /// <param name="level"></param>
     public void LoadLevel(string level)
     {
-        SceneManager.LoadScene(level);
+        deathCanvas.gameObject.SetActive(false);
+        finishCanvas.gameObject.SetActive(false);
         lifes = 3;
+        SceneManager.LoadScene(level);
     }
 
     /// <summary>
