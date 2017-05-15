@@ -12,14 +12,6 @@ public class GameController : MonoBehaviour {
     [Header("Minimalhöhe / Player death")]
     public float bottomLevel = -1;
 
-    [Range(0, 10)]
-    [Header("Respawn nach Tod")]
-    public float respawnAfterDeath = 2;
-
-    [Range(-100, 0)]
-    [Header("Respawn nach Finish")]
-    public float respawnAfterFinish = 5;
-
     private Spawner Spawner;
     private MyCamera mycamera;
     private Player player;
@@ -30,10 +22,13 @@ public class GameController : MonoBehaviour {
     private Transform startMenue;
     private Transform endMenue;
 
-    private int score = 0;
     private int lifes = 3;
     private int sceneNumber = 0;
 
+    private float startTime;
+    private float storedTime;
+    private bool pausedTimer = true;
+    private float score = 0;
 
 
     ///=================================///
@@ -43,6 +38,8 @@ public class GameController : MonoBehaviour {
     /// <summary>
     /// sets gameController not to be destroyed
     /// and add callback function for "onSceneLoaded"
+    /// get all panels
+    /// and load 'Start'-scene
     /// </summary>
     void Start () {
         GameObject.DontDestroyOnLoad(gameObject);
@@ -55,7 +52,14 @@ public class GameController : MonoBehaviour {
         startMenue      = transform.Find("StartMenue");
         endMenue        = transform.Find("EndMenue");
 
+        // Load Start-Scene
         SceneManager.LoadScene("Start");
+    }
+
+
+    void Update()
+    {
+        updateTimer();
     }
 
 
@@ -72,24 +76,97 @@ public class GameController : MonoBehaviour {
     /// <param name="mode"></param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // get Build-Index Number (to select next level)
         sceneNumber = scene.buildIndex;
 
-        if (scene.name != "Start" && scene.name != "End" && scene.name != "Init")
+        if(scene.name == "Start")
         {
-            finishCanvas.gameObject.SetActive(false);
-            updateLifes();
-            ingameUI.gameObject.SetActive(true);
-            ingameUI.Find("LevelName").GetComponent<Text>().text = "\"" + scene.name + "\"";
-        } else if(scene.name == "Start")
-        {
+            // disable panels
             endMenue.gameObject.SetActive(false);
-            startMenue.gameObject.SetActive(true);
             ingameUI.gameObject.SetActive(false);
-        } else if(scene.name == "End")
-        {
-            endMenue.gameObject.SetActive(true);
+
+            // enable panels
+            startMenue.gameObject.SetActive(true);
         }
+        else if (scene.name == "End")
+        {
+            // disable panels
+            ingameUI.gameObject.SetActive(false);
+
+            endMenue.Find("Scorepoints").GetComponent<Text>().text = getScore();
+
+            // enable panels
+            endMenue.gameObject.SetActive(true);
+
+        } else if(scene.name != "Init")
+        {
+            updateLifes();
+
+            // update level name
+            ingameUI.Find("LevelName").GetComponent<Text>().text = "\"" + scene.name + "\"";
+
+            startTimer();
+        }
+
     }
+
+
+
+    ///==================================///
+    ///==========PUBLIC METHODS==========///
+    ///==================================///
+
+    /// <summary>
+    /// load the next Level (by build index)
+    /// resets the lifes and disable canvas
+    /// </summary>
+    public void nextLevel()
+    {
+        finishCanvas.gameObject.SetActive(false);
+        lifes = 3;
+        SceneManager.LoadScene(++sceneNumber);
+    }
+
+    /// <summary>
+    /// resets score
+    /// loads level1 and d
+    /// </summary>
+    public void startGame()
+    {
+        score = 0;
+        storedTime = 0;
+        LoadLevel("Level1");
+        startMenue.gameObject.SetActive(false);
+        ingameUI.gameObject.SetActive(true);
+    }
+
+
+
+
+
+
+
+    private void startTimer()
+    {
+        pausedTimer = false;
+        startTime = Time.time;
+    }
+
+    private void pauseTimer()
+    {
+        pausedTimer = true;
+        storedTime += Time.time - startTime;
+    }
+
+    private void updateTimer()
+    {
+        if(!pausedTimer)
+        {
+            score = storedTime + (Time.time - startTime);
+        }
+        ingameUI.Find("Timer").GetComponent<Text>().text = getScore();
+    }
+
 
     /// <summary>
     /// respawns the player
@@ -102,6 +179,8 @@ public class GameController : MonoBehaviour {
 
         // Hole den letzten Checkpoint und spawne den Spieler DORT!
         this.Spawner.spawnPlayer();
+
+        startTimer();
     }
 
     /// <summary>
@@ -131,19 +210,9 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    public void nextLevel()
-    {
-        deathCanvas.gameObject.SetActive(false);
-        finishCanvas.gameObject.SetActive(false);
-        lifes = 3;
-        SceneManager.LoadScene(++sceneNumber);
-    }
 
 
 
-    ///==================================///
-    ///==========PUBLIC METHODS==========///
-    ///==================================///
 
     /// <summary>
     /// register the playerobject for this script
@@ -184,6 +253,8 @@ public class GameController : MonoBehaviour {
     /// </summary>
     public void playerDeath()
     {
+        pauseTimer();
+
         deathCanvas.gameObject.SetActive(true);
 
         // destroy the player
@@ -207,6 +278,8 @@ public class GameController : MonoBehaviour {
     /// </summary>
     public void playerFinish()
     {
+        pauseTimer();
+
         // disable moving and print to console
         player.GetComponent<Player>().movingEnabled = false;
         Debug.Log("Ziel erreicht");
@@ -214,19 +287,12 @@ public class GameController : MonoBehaviour {
         // [OPTIONAL] destroy player
         destroyPlayer();
 
+        finishCanvas.Find("Scorepoints").GetComponent<Text>().text = getScore();
+
         // Enables the Canvas-Element
         finishCanvas.gameObject.SetActive(true);
     }
 
-    /// <summary>
-    /// resets score
-    /// </summary>
-    public void startGame()
-    {
-        score = 0;
-        LoadLevel("Level1");
-        startMenue.gameObject.SetActive(false);
-    }
 
     /// <summary>
     /// changes scene
@@ -259,7 +325,12 @@ public class GameController : MonoBehaviour {
     /// <returns></returns>
     public string getScore()
     {
-        score = Random.Range(1, 1000000);
-        return score.ToString();
+        int minutes = (int) (score / 60);
+        int seconds = (int) score;
+        int ms = (int) ((score - (float) seconds) * 1000);
+
+
+        //score = Random.Range(1, 1000000);
+        return minutes.ToString("D2")+":"+seconds.ToString("D2")+":" + ms.ToString("D3");
     }
 }
