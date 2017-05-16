@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour {
     ///==================================///
     ///==========Vars & Objects==========///
     ///==================================///
+
     [Range(-100, 0)]
     [Header("Minimalhöhe / Player death")]
     public float bottomLevel = -1;
@@ -19,8 +20,6 @@ public class GameController : MonoBehaviour {
     private Transform deathCanvas;
     private Transform finishCanvas;
     private Transform ingameUI;
-    //private Transform startMenue;
-    //private Transform endMenue;
 
     private int lifes = 3;
     private int sceneNumber = 0;
@@ -29,6 +28,7 @@ public class GameController : MonoBehaviour {
     private float storedTime;
     private bool pausedTimer = true;
     private float score = 0;
+
 
 
     ///=================================///
@@ -49,14 +49,14 @@ public class GameController : MonoBehaviour {
         deathCanvas     = transform.Find("DeathCanvas");
         finishCanvas    = transform.Find("FinishCanvas");
         ingameUI        = transform.Find("IngameUI");
-        //startMenue      = transform.Find("StartMenue");
-        //endMenue        = transform.Find("EndMenue");
 
         // Load Start-Scene
         SceneManager.LoadScene("Start");
     }
 
-
+    /// <summary>
+    /// used to update the timer if ingame
+    /// </summary>
     void Update()
     {
         updateTimer();
@@ -79,10 +79,13 @@ public class GameController : MonoBehaviour {
         // get Build-Index Number (to select next level)
         sceneNumber = scene.buildIndex;
 
-        if(scene.name == "Start")
+        if (scene.name == "Start")
         {
             // disable panels
             ingameUI.gameObject.SetActive(false);
+
+            score = 0;
+            storedTime = 0;
 
         }
         else if (scene.name == "End")
@@ -90,15 +93,18 @@ public class GameController : MonoBehaviour {
             // disable panels
             ingameUI.gameObject.SetActive(false);
 
-            GameObject.Find("EndMenue").GetComponentInChildren<Text>().text = getScore();
+            GameObject.Find("EndMenue").GetComponentInChildren<Text>().text = getScoreFormat();
 
             //endMenue.Find("Scorepoints").GetComponent<Text>().text = getScore();
 
 
-        } else if(scene.name != "Init")
+        }
+        else if (scene.name != "Init")
         {
             deathCanvas.gameObject.SetActive(false);
             finishCanvas.gameObject.SetActive(false);
+            ingameUI.gameObject.SetActive(true);
+
             lifes = 3;
 
             updateLifes();
@@ -111,76 +117,49 @@ public class GameController : MonoBehaviour {
 
     }
 
-
-
-    ///==================================///
-    ///==========PUBLIC METHODS==========///
-    ///==================================///
-
     /// <summary>
-    /// load the next Level (by build index)
-    /// resets the lifes and disable canvas
+    /// sets the startTime for the Timer
     /// </summary>
-    public void nextLevel()
-    {
-        finishCanvas.gameObject.SetActive(false);
-        lifes = 3;
-        SceneManager.LoadScene(++sceneNumber);
-    }
-
-    /// <summary>
-    /// resets score
-    /// loads level1 and d
-    /// </summary>
-    public void startGame()
-    {
-        score = 0;
-        storedTime = 0;
-        LoadLevel("Level1");
-        ingameUI.gameObject.SetActive(true);
-    }
-
-
-
-
-
-
-
     private void startTimer()
     {
         pausedTimer = false;
         startTime = Time.time;
     }
 
+    /// <summary>
+    /// stores the time (for levelchange, death...)
+    /// </summary>
     private void pauseTimer()
     {
         pausedTimer = true;
         storedTime += Time.time - startTime;
     }
 
+    /// <summary>
+    /// updates the Score / Timer Value by adding the stored time to the actual time
+    /// </summary>
     private void updateTimer()
     {
-        if(!pausedTimer)
+        if (!pausedTimer)
         {
             score = storedTime + (Time.time - startTime);
         }
-        ingameUI.Find("Timer").GetComponent<Text>().text = getScore();
+        ingameUI.Find("Timer").GetComponent<Text>().text = getScoreFormat();
     }
 
-
     /// <summary>
-    /// respawns the player
-    /// gets triggered by playerDeath- and playerFinish-method
-    /// later by the checkpoint object(?)
+    /// returns the score as string in mm:ss:msmsms
     /// </summary>
-    public void respawnPlayer()
+    /// <returns></returns>
+    private string getScoreFormat()
     {
-        deathCanvas.gameObject.SetActive(false);
+        int minutes = (int)(score / 60);
+        int seconds = (int)score;
+        int ms = (int)((score - (float)seconds) * 1000);
 
-        // Hole den letzten Checkpoint und spawne den Spieler DORT!
-        this.Spawner.spawnPlayer();
 
-        startTimer();
+        //score = Random.Range(1, 1000000);
+        return minutes.ToString("D2") + ":" + seconds.ToString("D2") + ":" + ms.ToString("D3");
     }
 
     /// <summary>
@@ -195,7 +174,7 @@ public class GameController : MonoBehaviour {
     private void updateLifes()
     {
         string lifeText = "";
-        for(int i = 0; i < lifes; i++)
+        for (int i = 0; i < lifes; i++)
         {
             lifeText += "❤";
         }
@@ -212,7 +191,9 @@ public class GameController : MonoBehaviour {
 
 
 
-
+    ///==================================///
+    ///==========PUBLIC METHODS==========///
+    ///==================================///
 
     /// <summary>
     /// register the playerobject for this script
@@ -247,9 +228,42 @@ public class GameController : MonoBehaviour {
     }
 
     /// <summary>
+    /// changes scene
+    /// </summary>
+    /// <param name="level">Levelname</param>
+    public void LoadLevel(string level)
+    {
+        SceneManager.LoadScene(level);
+    }
+
+    /// <summary>
+    /// load the next Level (by build index)
+    /// resets the lifes and disable canvas
+    /// </summary>
+    public void nextLevel()
+    {
+        finishCanvas.gameObject.SetActive(false);
+        lifes = 3;
+        SceneManager.LoadScene(++sceneNumber);
+    }
+
+    /// <summary>
+    /// stops game
+    /// </summary>
+    public void stopGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
+    /// <summary>
     /// method defines what happens if the player dies
     /// - print to console
     /// - respawn the player
+    /// - pause the timer
     /// </summary>
     public void playerDeath()
     {
@@ -260,9 +274,7 @@ public class GameController : MonoBehaviour {
         // destroy the player
         destroyPlayer();
 
-
-
-        if(lifes > 0)
+        if (lifes > 0)
         {
             lifes--;
         }
@@ -275,6 +287,7 @@ public class GameController : MonoBehaviour {
     /// - disable moving and print to console
     /// - destroy the player
     /// - respawn the player
+    /// - pause the Timer
     /// </summary>
     public void playerFinish()
     {
@@ -287,47 +300,24 @@ public class GameController : MonoBehaviour {
         // [OPTIONAL] destroy player
         destroyPlayer();
 
-        finishCanvas.Find("Scorepoints").GetComponent<Text>().text = getScore();
+        finishCanvas.Find("Scorepoints").GetComponent<Text>().text = getScoreFormat();
 
         // Enables the Canvas-Element
         finishCanvas.gameObject.SetActive(true);
     }
 
-
     /// <summary>
-    /// changes scene
-    /// gets the Spawner object, trigger the animation and spawns a player
+    /// respawns the player
+    /// gets triggered by playerDeath- and playerFinish-method
+    /// later by the checkpoint object(?)
     /// </summary>
-    /// <param name="level"></param>
-    public void LoadLevel(string level)
+    public void respawnPlayer()
     {
-        SceneManager.LoadScene(level);
-    }
+        deathCanvas.gameObject.SetActive(false);
 
-    /// <summary>
-    /// stops game
-    /// </summary>
-    public void stopGame()
-    {
-        #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-        #else
-        Application.Quit();
-        #endif
-    }
+        // Hole den letzten Checkpoint und spawne den Spieler DORT!
+        this.Spawner.spawnPlayer();
 
-    /// <summary>
-    /// returns the score as string
-    /// </summary>
-    /// <returns></returns>
-    public string getScore()
-    {
-        int minutes = (int) (score / 60);
-        int seconds = (int) score;
-        int ms = (int) ((score - (float) seconds) * 1000);
-
-
-        //score = Random.Range(1, 1000000);
-        return minutes.ToString("D2")+":"+seconds.ToString("D2")+":" + ms.ToString("D3");
+        startTimer();
     }
 }
