@@ -19,8 +19,8 @@ public class GameController : MonoBehaviour {
     private Transform deathCanvas;
     private Transform finishCanvas;
     private Transform ingameUI;
-    private Transform startMenue;
-    private Transform endMenue;
+    //private Transform startMenue;
+    //private Transform endMenue;
 
     private int lifes = 3;
     private int sceneNumber = 0;
@@ -49,8 +49,8 @@ public class GameController : MonoBehaviour {
         deathCanvas     = transform.Find("DeathCanvas");
         finishCanvas    = transform.Find("FinishCanvas");
         ingameUI        = transform.Find("IngameUI");
-        startMenue      = transform.Find("StartMenue");
-        endMenue        = transform.Find("EndMenue");
+        //startMenue      = transform.Find("StartMenue");
+        //endMenue        = transform.Find("EndMenue");
 
         // Load Start-Scene
         SceneManager.LoadScene("Start");
@@ -82,24 +82,25 @@ public class GameController : MonoBehaviour {
         if(scene.name == "Start")
         {
             // disable panels
-            endMenue.gameObject.SetActive(false);
             ingameUI.gameObject.SetActive(false);
 
-            // enable panels
-            startMenue.gameObject.SetActive(true);
         }
         else if (scene.name == "End")
         {
             // disable panels
             ingameUI.gameObject.SetActive(false);
 
-            endMenue.Find("Scorepoints").GetComponent<Text>().text = getScore();
+            GameObject.Find("EndMenue").GetComponentInChildren<Text>().text = getScore();
 
-            // enable panels
-            endMenue.gameObject.SetActive(true);
+            //endMenue.Find("Scorepoints").GetComponent<Text>().text = getScore();
+
 
         } else if(scene.name != "Init")
         {
+            deathCanvas.gameObject.SetActive(false);
+            finishCanvas.gameObject.SetActive(false);
+            lifes = 3;
+
             updateLifes();
 
             // update level name
@@ -136,7 +137,6 @@ public class GameController : MonoBehaviour {
         score = 0;
         storedTime = 0;
         LoadLevel("Level1");
-        startMenue.gameObject.SetActive(false);
         ingameUI.gameObject.SetActive(true);
     }
 
@@ -301,9 +301,6 @@ public class GameController : MonoBehaviour {
     /// <param name="level"></param>
     public void LoadLevel(string level)
     {
-        deathCanvas.gameObject.SetActive(false);
-        finishCanvas.gameObject.SetActive(false);
-        lifes = 3;
         SceneManager.LoadScene(level);
     }
 
