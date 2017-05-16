@@ -154,8 +154,8 @@ public class GameController : MonoBehaviour {
     private string getScoreFormat()
     {
         int minutes = (int)(score / 60);
-        int seconds = (int)score;
-        int ms = (int)((score - (float)seconds) * 1000);
+        int seconds = (int) (score - (minutes*60));
+        int ms = (int)((score - (seconds + (minutes*60))) * 1000);
 
 
         //score = Random.Range(1, 1000000);
