@@ -185,7 +185,7 @@ public class GameController : MonoBehaviour {
         // deactivate respawn
         if (lifes < 1)
         {
-            deathCanvas.Find("RespawnButton").gameObject.SetActive(false);
+            deathCanvas.Find("Button_Respawn").gameObject.SetActive(false);
         }
     }
 
