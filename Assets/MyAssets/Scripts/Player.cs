@@ -45,7 +45,7 @@ public class Player : MonoBehaviour {
     /// controls the player movement 
     /// & checks the position of the player object
     /// </summary>
-    void Update()
+    void FixedUpdate()
     {
         playerMoving();
         positionCheck();
@@ -78,7 +78,8 @@ public class Player : MonoBehaviour {
 
         if (movingEnabled)
         {
-            rigid_body.AddForce(movement * playerSpeed * Time.deltaTime);
+            //rigid_body.AddForce(movement * playerSpeed * Time.deltaTime);
+            rigid_body.AddForce(movement * playerSpeed);
         }
         else
         {
