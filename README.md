@@ -13,6 +13,6 @@ Die Spielfigur kann zudem mit SPACE/Leertaste springen.
 # Aktueller Entwicklungsstand
 - [x] Prototyp
 - [x] Meilenstein 1
-- [ ] Meilenstein 2
+- [x] Meilenstein 2
 - [ ] Meilenstein 3
 - [ ] Meilenstein 4
