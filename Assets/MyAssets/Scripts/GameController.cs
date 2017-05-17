@@ -93,10 +93,7 @@ public class GameController : MonoBehaviour {
             // disable panels
             ingameUI.gameObject.SetActive(false);
 
-            GameObject.Find("EndMenue").GetComponentInChildren<Text>().text = getScoreFormat();
-
-            //endMenue.Find("Scorepoints").GetComponent<Text>().text = getScore();
-
+            GameObject.Find("EndMenue/Scorepoints").GetComponent<Text>().text = getScoreFormat();
 
         }
         else if (scene.name != "Init")
