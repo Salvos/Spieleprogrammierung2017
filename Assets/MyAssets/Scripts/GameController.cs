@@ -29,6 +29,7 @@ public class GameController : MonoBehaviour {
     private bool pausedTimer = true;
     private float score = 0;
 
+    private float lastDeath = 0;
 
 
     ///=================================///
@@ -264,19 +265,23 @@ public class GameController : MonoBehaviour {
     /// </summary>
     public void playerDeath()
     {
-        pauseTimer();
+        if (lastDeath + 5 < Time.time) {
+            lastDeath = Time.time;
 
-        deathCanvas.gameObject.SetActive(true);
+            pauseTimer();
 
-        // destroy the player
-        destroyPlayer();
+            deathCanvas.gameObject.SetActive(true);
 
-        if (lifes > 0)
-        {
-            lifes--;
+            // destroy the player
+            destroyPlayer();
+
+            if (lifes > 0)
+            {
+                lifes--;
+            }
+
+            updateLifes();
         }
-
-        updateLifes();
     }
 
     /// <summary>
