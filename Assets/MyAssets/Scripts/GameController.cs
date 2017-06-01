@@ -317,4 +317,9 @@ public class GameController : MonoBehaviour {
 
         startTimer();
     }
+
+    public void reduceTimer(float time)
+    {
+        storedTime -= time;
+    }
 }
