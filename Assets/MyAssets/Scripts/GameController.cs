@@ -167,6 +167,11 @@ public class GameController : MonoBehaviour {
     {
         mycamera.SetPlayer(null);
         Destroy(player.gameObject);
+
+        foreach(GameObject shooter in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            shooter.GetComponent<Shooter>().setTarget(null);
+        }
     }
 
     private void updateLifes()
@@ -202,6 +207,10 @@ public class GameController : MonoBehaviour {
     {
         this.player = player;
         mycamera.SetPlayer(player);
+        foreach (GameObject shooter in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            shooter.GetComponent<Shooter>().setTarget(player);
+        }
     }
 
     /// <summary>
