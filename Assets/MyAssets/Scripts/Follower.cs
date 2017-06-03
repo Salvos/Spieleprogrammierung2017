@@ -20,7 +20,6 @@ public class Follower : MonoBehaviour {
 
     private Player player;
     private float lastPush = 0;
-    private GameController gameController;
     private Rigidbody rigid_body;
     private Vector3 startPosition;
 
@@ -32,7 +31,6 @@ public class Follower : MonoBehaviour {
         startPosition = transform.position;
 
         // get the gamecontroller & the rigidbody
-        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         rigid_body = GetComponent<Rigidbody>();
     }
 
@@ -44,13 +42,7 @@ public class Follower : MonoBehaviour {
             if (playerDistance <= distance)
             {
                 rigid_body.AddForce((player.transform.position-transform.position) * playerSpeed);
-                //transform.position = new Vector3(startPosition.x, startPosition.y + 1, startPosition.z);
             }
-        }
-
-        if (transform.position.y < gameController.bottomLevel)
-        {
-            Destroy(gameObject);
         }
     }
 
@@ -58,5 +50,11 @@ public class Follower : MonoBehaviour {
     public void setTarget(Player spieler)
     {
         player = spieler;
+
+        if (player != null)
+        {
+            transform.position = startPosition;
+            rigid_body.velocity = Vector3.zero;
+        }
     }
 }
