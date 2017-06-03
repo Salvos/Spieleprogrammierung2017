@@ -9,7 +9,7 @@ public class Shooter : MonoBehaviour {
 
     [Header("Drehgeschwindigkeit des Kopfes")]
     [Range(1f, 200.0f)]
-    public float rotationSpeed = 100.0f;
+    public float rotationSpeed = 10.0f;
 
     [Header("Max. Geschossabweichung (Streuung)")]
     [Range(0.0f, 10.0f)]
@@ -22,9 +22,15 @@ public class Shooter : MonoBehaviour {
     [Header("Geschoss")]
     public GameObject bulletType;
 
+    [Header("Geschossgeschwindigkeit")]
+    [Range(1.0f, 100.0f)]
+    public float speed = 10;
+
     [Header("Anzahl Kugeln pro Schuss")]
     [Range(1, 100)]
     public int bulletsPerShot = 1;
+
+    private float firstShotDelay = 5f;
 
     public GameObject firePoint;
 
@@ -40,7 +46,8 @@ public class Shooter : MonoBehaviour {
 
     private void Start()
     {
-        lastShot = 0f;
+        // Set a delay for firstShot
+        lastShot = Time.time + firstShotDelay;
     }
 
 
@@ -52,13 +59,11 @@ public class Shooter : MonoBehaviour {
         
             if (lastShot+shootDelay < Time.time)
             {
-                lastShot = Time.deltaTime;
+                lastShot = Time.time;
 
                 GameObject bullet = Instantiate(bulletType);
                 bullet.transform.position = firePoint.transform.position;
-                bullet.transform.Rotate(new Vector3(90, 0, 0), Space.Self);
-                bullet.transform.rotation = firePoint.transform.rotation;
-                bullet.GetComponent<Bullet>().shoot(player.transform.position, diversion);
+                bullet.GetComponent<Bullet>().shoot(player.transform.position, diversion, speed);
             }
 
         }

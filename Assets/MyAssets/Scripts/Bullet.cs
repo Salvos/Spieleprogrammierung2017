@@ -6,13 +6,6 @@ public class Bullet : MonoBehaviour {
     ///==================================///
     ///==========Vars & Objects==========///
     ///==================================///
-    [Range(1, 1000)]
-    [Header("Schaden")]
-    public int bulletDamage = 2;
-
-    [Header("Geschossgeschwindigkeit")]
-    [Range(1.0f, 100.0f)]
-    public float speed = 10;
 
     [Header("Anzahl der Sekunden bis zum Despawn")]
     [Tooltip("Das Geschoss wird nach X sekunden entfernt")]
@@ -40,7 +33,7 @@ public class Bullet : MonoBehaviour {
     ///=================================///
     ///==========Public Methods=========///
     ///=================================///
-    public void shoot(Vector3 direction, float diversion)
+    public void shoot(Vector3 direction, float diversion, float speed)
     {
         // Erschaffe eine Abweichung von max. 1(m) 
         float targetX = direction.x + Random.Range(-diversion, diversion);
