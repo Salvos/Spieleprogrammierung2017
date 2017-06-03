@@ -168,9 +168,15 @@ public class GameController : MonoBehaviour {
         mycamera.SetPlayer(null);
         Destroy(player.gameObject);
 
-        foreach(GameObject shooter in GameObject.FindGameObjectsWithTag("Enemy"))
+        foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            shooter.GetComponent<Shooter>().setTarget(null);
+            Shooter shooterScript = enemy.GetComponent<Shooter>();
+            if (shooterScript != null)
+                shooterScript.setTarget(player);
+
+            Follower followerScript = enemy.GetComponent<Follower>();
+            if (followerScript != null)
+                followerScript.setTarget(player);
         }
     }
 
@@ -207,9 +213,15 @@ public class GameController : MonoBehaviour {
     {
         this.player = player;
         mycamera.SetPlayer(player);
-        foreach (GameObject shooter in GameObject.FindGameObjectsWithTag("Enemy"))
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            shooter.GetComponent<Shooter>().setTarget(player);
+            Shooter shooterScript = enemy.GetComponent<Shooter>();
+            if (shooterScript != null)
+                shooterScript.setTarget(player);
+
+            Follower followerScript = enemy.GetComponent<Follower>();
+            if (followerScript != null)
+                followerScript.setTarget(player);
         }
     }
 
