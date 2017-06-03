@@ -47,7 +47,7 @@ public class Shooter : MonoBehaviour {
     private void Start()
     {
         // Set a delay for firstShot
-        lastShot = Time.time + firstShotDelay;
+        //lastShot = Time.time + firstShotDelay;
     }
 
 
@@ -83,5 +83,11 @@ public class Shooter : MonoBehaviour {
     public void setTarget(Player spieler)
     {
         player = spieler;
+
+        // on "reset" the firstShot needs to be resetted
+        if(player != null)
+        {
+            lastShot = Time.time + firstShotDelay;
+        }
     }
 }
