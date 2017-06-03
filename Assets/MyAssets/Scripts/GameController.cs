@@ -172,11 +172,11 @@ public class GameController : MonoBehaviour {
         {
             Shooter shooterScript = enemy.GetComponent<Shooter>();
             if (shooterScript != null)
-                shooterScript.setTarget(player);
+                shooterScript.setTarget(null);
 
             Follower followerScript = enemy.GetComponent<Follower>();
             if (followerScript != null)
-                followerScript.setTarget(player);
+                followerScript.setTarget(null);
         }
     }
 

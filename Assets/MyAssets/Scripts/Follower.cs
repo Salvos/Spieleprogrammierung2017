@@ -42,6 +42,9 @@ public class Follower : MonoBehaviour {
             if (playerDistance <= distance)
             {
                 rigid_body.AddForce((player.transform.position-transform.position) * playerSpeed);
+            } else
+            {
+                rigid_body.velocity = Vector3.zero;
             }
         }
     }
@@ -51,10 +54,8 @@ public class Follower : MonoBehaviour {
     {
         player = spieler;
 
-        if (player != null)
-        {
-            transform.position = startPosition;
-            rigid_body.velocity = Vector3.zero;
-        }
+        transform.position = startPosition;
+        rigid_body.velocity = Vector3.zero;
+        transform.rotation = Quaternion.identity;
     }
 }
