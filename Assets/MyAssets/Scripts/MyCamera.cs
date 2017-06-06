@@ -6,8 +6,8 @@ public class MyCamera : MonoBehaviour {
     ///==================================///
     ///==========Vars & Objects==========///
     ///==================================///
-    [Header("Soll die Kamera folgen?")]
-    public bool staticCamera = true;
+    [Header("Third Person")]
+    public bool thirdPerson = false;
 
     private Player player;
     private Vector3 startPosition;
@@ -36,8 +36,15 @@ public class MyCamera : MonoBehaviour {
     /// </summary>
     void Update()
     {
-        if (player != null && staticCamera == false)
+        if (player != null && thirdPerson == false)
             transform.position = player.transform.position + offset;
+
+        if (player != null && thirdPerson == true)
+        {
+            transform.position = player.transform.position + offset;
+            transform.LookAt(player.transform.position - offset);
+        }
+            
     }
 
 
@@ -53,7 +60,7 @@ public class MyCamera : MonoBehaviour {
     /// </summary>
     private void toggleCamera()
     {
-        if(staticCamera == true)
+        if(thirdPerson == true)
         {
 
 
@@ -62,7 +69,7 @@ public class MyCamera : MonoBehaviour {
 
         }
 
-        staticCamera = !staticCamera;
+        thirdPerson = !thirdPerson;
     }
 
 
