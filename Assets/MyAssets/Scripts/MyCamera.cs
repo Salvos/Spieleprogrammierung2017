@@ -10,6 +10,8 @@ public class MyCamera : MonoBehaviour {
     public bool thirdPerson = false;
 
     private Player player;
+    private Vector3 startPosition;
+    private Quaternion startRotation;
 
 
 
@@ -18,16 +20,21 @@ public class MyCamera : MonoBehaviour {
     ///=================================///
 
     /// <summary>
-    /// sets the startposition of the camera
+    /// sets the startposition of the camera-Object
+    /// FIX? sets the startrotation-Object
+    /// register this camera object
     /// </summary>
     void Start()
     {
         GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>().registerCamera(this);
+        startPosition = transform.position;
+        startRotation = transform.rotation;
     }
 
     /// <summary>
-    /// if fixedCamera == true -> do nothing
-    /// if fixedCamera == false -> follow the player
+    /// toggles the camera-mode (on k) 
+    /// if the target is set the camera-Object should follow the target
+    /// - and if the third Person is set - rotate the Third Person object (with third person camera)
     /// </summary>
     void Update()
     {
@@ -52,15 +59,14 @@ public class MyCamera : MonoBehaviour {
     ///===================================///
 
     /// <summary>
-    /// LATER USED!
-    /// change the camera mode (static / follow)
-    /// if triggered -> make a transition!
+    /// change the camera mode (thirdperson / isometric)
+    /// if triggered -> change the active camera
     /// </summary>
     private void toggleCamera()
     {
         thirdPerson = !thirdPerson;
 
-        if (thirdPerson == true)
+        if (thirdPerson)
         {
             transform.FindChild("Isometric_Camera").gameObject.SetActive(false);
             transform.FindChild("Third_Person").gameObject.SetActive(true);
@@ -80,24 +86,28 @@ public class MyCamera : MonoBehaviour {
     /// <summary>
     /// sets the playerobject and the camera position
     /// </summary>
-    public void SetPlayer(Player player)
+    public void SetPlayer(Player spieler)
     {
-        if(player != null)
+        player = spieler;
+
+        if (player != null)
+        {
             transform.position = player.transform.position;
+        } else
+        {
+            transform.position = startPosition;
+            transform.rotation = startRotation;
+        }
 
-        this.player = player;
-
-        /*
-        if (player!= null)
-            offset = transform.position - player.transform.position;
-            */
+        
     }
 
-
-
+    /// <summary>
+    /// returns the rotation of the Camera-Object
+    /// </summary>
     public Quaternion getRotation()
     {
-        if (thirdPerson == true)
+        if (thirdPerson)
         {
             return transform.FindChild("Third_Person").transform.rotation;
         }
