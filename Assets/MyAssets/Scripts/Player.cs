@@ -19,7 +19,7 @@ public class Player : MonoBehaviour {
 
     private GameController gameController;
     private Rigidbody rigid_body;
-
+    private MyCamera camera;
 
 
     ///=================================///
@@ -35,6 +35,8 @@ public class Player : MonoBehaviour {
     {
         // get the gamecontroller & the rigidbody
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+
+        camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<MyCamera>();
         rigid_body = GetComponent<Rigidbody>();
 
         // register this player
@@ -64,7 +66,18 @@ public class Player : MonoBehaviour {
     /// </summary>
     private void playerMoving()
     {
-        Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        //Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector3 movement;
+
+        if (camera.thirdPerson)
+        {
+            movement = new Vector3(0, 0, Input.GetAxis("Vertical"));
+            rigid_body.velocity = Quaternion.Euler(0, Input.GetAxis("Horizontal") * (playerSpeed/10), 0) * rigid_body.velocity;
+        } else
+        {
+            movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        }
+
 
         RaycastHit hit;
 
@@ -72,14 +85,14 @@ public class Player : MonoBehaviour {
         {
             if(hit.collider.tag == "Plane")
             {
-                movement.y = Input.GetAxis("Jump") * jumpBoost;
+                //movement.y = Input.GetAxis("Jump") * jumpBoost;
+                rigid_body.AddForce(0, Input.GetAxis("Jump") * jumpBoost, 0, ForceMode.Impulse);
             }
         }
 
         if (movingEnabled)
         {
-            //rigid_body.AddForce(movement * playerSpeed * Time.deltaTime);
-            rigid_body.AddForce(movement * playerSpeed);
+            rigid_body.AddForce(camera.getRotation() * movement * playerSpeed );
         }
         else
         {
@@ -98,5 +111,6 @@ public class Player : MonoBehaviour {
             gameController.playerDeath();
         }
     }
+
 
 }

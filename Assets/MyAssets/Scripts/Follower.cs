@@ -45,6 +45,7 @@ public class Follower : MonoBehaviour {
             } else
             {
                 rigid_body.velocity = Vector3.zero;
+                rigid_body.angularVelocity = Vector3.zero;
             }
         }
     }

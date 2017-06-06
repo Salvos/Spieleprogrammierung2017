@@ -10,9 +10,6 @@ public class MyCamera : MonoBehaviour {
     public bool thirdPerson = false;
 
     private Player player;
-    private Vector3 startPosition;
-    private Vector3 offset;
-    private GameController gameController;
 
 
 
@@ -25,9 +22,7 @@ public class MyCamera : MonoBehaviour {
     /// </summary>
     void Start()
     {
-        startPosition = transform.position;
-        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-        gameController.registerCamera(this);
+        GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>().registerCamera(this);
     }
 
     /// <summary>
@@ -36,15 +31,18 @@ public class MyCamera : MonoBehaviour {
     /// </summary>
     void Update()
     {
-        if (player != null && thirdPerson == false)
-            transform.position = player.transform.position + offset;
-
-        if (player != null && thirdPerson == true)
+        if(player != null)
         {
-            transform.position = player.transform.position + offset;
-            transform.LookAt(player.transform.position - offset);
+            transform.position = player.transform.position;
+
+            if(thirdPerson)
+                transform.FindChild("Third_Person").Rotate(0, Input.GetAxis("Horizontal"), 0, Space.World);
         }
             
+        if (Input.GetKeyUp(KeyCode.K))
+        {
+            toggleCamera();
+        }
     }
 
 
@@ -60,16 +58,17 @@ public class MyCamera : MonoBehaviour {
     /// </summary>
     private void toggleCamera()
     {
-        if(thirdPerson == true)
+        thirdPerson = !thirdPerson;
+
+        if (thirdPerson == true)
         {
-
-
+            transform.FindChild("Isometric_Camera").gameObject.SetActive(false);
+            transform.FindChild("Third_Person").gameObject.SetActive(true);
         } else
         {
-
+            transform.FindChild("Third_Person").gameObject.SetActive(false);
+            transform.FindChild("Isometric_Camera").gameObject.SetActive(true);
         }
-
-        thirdPerson = !thirdPerson;
     }
 
 
@@ -83,10 +82,28 @@ public class MyCamera : MonoBehaviour {
     /// </summary>
     public void SetPlayer(Player player)
     {
-        transform.position = startPosition;
+        if(player != null)
+            transform.position = player.transform.position;
+
         this.player = player;
 
+        /*
         if (player!= null)
             offset = transform.position - player.transform.position;
+            */
+    }
+
+
+
+    public Quaternion getRotation()
+    {
+        if (thirdPerson == true)
+        {
+            return transform.FindChild("Third_Person").transform.rotation;
+        }
+        else
+        {
+            return transform.FindChild("Isometric_Camera").transform.rotation;
+        }
     }
 }
