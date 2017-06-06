@@ -22,6 +22,7 @@ public class Player : MonoBehaviour {
     private MyCamera camera;
 
 
+
     ///=================================///
     ///==========Unity Methods==========///
     ///=================================///
