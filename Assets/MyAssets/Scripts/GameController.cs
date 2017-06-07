@@ -85,9 +85,11 @@ public class GameController : MonoBehaviour {
             // disable panels
             ingameUI.gameObject.SetActive(false);
 
+            // Reset the respawn Button on main menue
+            deathCanvas.Find("Button_Respawn").gameObject.SetActive(true);
+
             score = 0;
             storedTime = 0;
-
         }
         else if (scene.name == "End")
         {
@@ -348,6 +350,4 @@ public class GameController : MonoBehaviour {
     {
         storedTime -= time;
     }
-
-
 }
